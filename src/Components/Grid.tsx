@@ -11,12 +11,22 @@ interface GridProps extends GridArgs{
     className?: string;
 }
 
-
-
 interface arrayToRowsArgs{
     array: Array<number>;
     numOfRows: number;
 }
+
+
+interface Dictionary<T>{
+    [key: string]: T;
+}
+
+const GridStyles: Dictionary<string> = {
+gridCellStyle:`flex-none h-4  w-4 border-b border-l border-opacity-0`,
+gridCellAliveStyle :`flex-none h-4 w-4 border-b border-l bg-purple-600 border-opacity-0`
+}
+
+
 
 const arrayToRows = ({ array, numOfRows }: arrayToRowsArgs) => {
     const returnArrays: Array<Array<number>> = [];
@@ -33,8 +43,8 @@ const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize }) => {
     
 
     return (
-        <div className="flex flex-col  items-center">
-            {data.map((rowData) => <div className=" h-6 flex flex-nowrap">{rowData.map((cell) => <div className="flex-none  w-6 border">{ cell}</div>) }</div>)}
+        <div className="flex flex-col items-center">
+            {data.map((rowData) => <div className=" flex  flex-nowrap">{rowData.map((cell) => <div className={(cell>0)?GridStyles['gridCellAliveStyle']:GridStyles['gridCellStyle']}></div>) }</div>)}
         </div>
     )
 }
