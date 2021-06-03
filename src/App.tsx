@@ -17,20 +17,15 @@ type Action =
 const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<number>> => {
   switch (action.type) {
     case "toggle_cell":
-      return state.map((rowItem, i) => {
-        if (i !== action.row) {
-          return rowItem;
-        }
-        return rowItem.map((cell, j) => {
-          if (j !== action.col) {
-            return cell;
-          }
-          if (cell === 0) {
-            return 1;
-          }
-          return 0;
-        });
-      })
+      const newState = [...state];
+      if (newState[action.row][action.col] === 0) {
+        newState[action.row][action.col] = 1;
+      }
+      else {
+        newState[action.row][action.col] = 0;
+      }
+      return newState;
+  
     default:
       return state;
   }
