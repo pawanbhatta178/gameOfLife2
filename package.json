@@ -12,6 +12,7 @@
     "@types/react-dom": "^17.0.6",
     "autoprefixer": "10.x",
     "cross-env": "7.x",
+    "lodash": "^4.17.21",
     "npm-run-all": "4.x",
     "postcss": "8.x",
     "postcss-cli": "8.x",
@@ -48,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.170"
   }
 }

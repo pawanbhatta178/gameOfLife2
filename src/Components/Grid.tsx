@@ -26,8 +26,8 @@ interface Dictionary<T>{
 }
 
 const GridStyles: Dictionary<string> = {
-gridCellStyle:`flex-none h-4  w-4 border-b border-l border-opacity-0`,
-gridCellAliveStyle :`flex-none h-4 w-4 border-b border-l bg-purple-600 border-opacity-0`
+gridCellStyle:`flex-none h-4  w-4 border-b border-l border-purple-200`,
+gridCellAliveStyle :`flex-none h-4 w-4 border-b border-l bg-purple-600 border-purple-100`
 }
 
 
@@ -35,7 +35,7 @@ gridCellAliveStyle :`flex-none h-4 w-4 border-b border-l bg-purple-600 border-op
 const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize, onCellClick }) => {
     return (
         <div className="flex flex-col items-center">
-            {data.map((rowData, i) => <div className=" flex  flex-nowrap">{rowData.map((cell, j) => <div onClick={(e) => { onCellClick({ row: i, col: j }) }} className={(cell>0)?GridStyles['gridCellAliveStyle']:GridStyles['gridCellStyle']}></div>) }</div>)}
+            {data.map((rowData, i) => <div key={`row-${i}`} className=" flex  flex-nowrap">{rowData.map((cell, j) => <div key={`cell-${i}-${j}`} onClick={(e) => { onCellClick({ row: i, col: j }) }} className={(cell>0)?GridStyles['gridCellAliveStyle']:GridStyles['gridCellStyle']}></div>) }</div>)}
         </div>
     )
 }
