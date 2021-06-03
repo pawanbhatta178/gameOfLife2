@@ -16,10 +16,10 @@ interface logoProps{
 const Logo: React.FC<logoProps> = ({ type, className }) => {
     
     if (type === logoTypes.SM) {
-        <div className={`font-semibold font-mono text-xl  ${className}`}>John Conway's Game of Life</div>
+        <div className={`font-semibold font-mono text-xl text-center ${className}`}>John Conway's Game of Life</div>
     }
     return (
-        <div className={`font-semibold font-mono text-2xl ${className}`}>John Conway's Game of Life</div>
+        <div className={`font-semibold font-mono text-2xl text-center ${className}`}>John Conway's Game of Life</div>
     )
 }
 

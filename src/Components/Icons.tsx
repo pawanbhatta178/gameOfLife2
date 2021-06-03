@@ -1,7 +1,8 @@
 import React from 'react'
 import { RiPauseFill, RiPlayFill } from "react-icons/ri";
 import { GiResize } from "react-icons/gi";
-import {FiRepeat} from "react-icons/fi";
+import { FiRepeat, FiMinimize, FiMaximize2 } from "react-icons/fi";
+
 import { GrClear } from "react-icons/gr";
 
 export interface IconProps  {
@@ -28,6 +29,12 @@ const Icon: React.FC<IconProps> = ({ name, className }) => {
     }
     if (name === "clear") {
         return <GrClear className={`${BaseIconStyle} ${HoverTransition} ${className}`}/>
+    }
+    if (name === "maximize") {
+        return <FiMaximize2 className={`${BaseIconStyle} ${HoverTransition} ${className}`}/>
+    }
+    if (name === "minimize") {
+        return <FiMinimize className={`${BaseIconStyle} ${HoverTransition} ${className}`}/>
     }
     return <></>
 }

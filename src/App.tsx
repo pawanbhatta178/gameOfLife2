@@ -96,6 +96,9 @@ const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<n
       const newClearedGrid = initializeGridArray({ numCols: state[0].length, numRows: state.length });
       return newClearedGrid;
     
+    case "alter_grid":
+      const newAlteredGrid = initializeGridArray({ numCols: action.col, numRows: action.row });
+      return newAlteredGrid;
     default:
       return state;
   }
@@ -116,8 +119,27 @@ function App() {
   const [frameSize, setFrameSize] = useState<number>(3);
   const [data, dispatch] = useReducer(gridReducer,initializeGridArray({numCols, numRows}));
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
-  const [playSpeed, setPlaySpeed] = useState<number>(1);
-  
+  const [playSpeed, setPlaySpeed] = useState<number>(3);
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    if (isFullScreen) {
+      setNumCols(80);
+      setNumRows(60);
+    }
+    else {
+      setNumCols(48);
+      setNumRows(52);
+    }
+  }, [isFullScreen])
+
+
+  useEffect(() => {
+      dispatch({type:"alter_grid",col:numCols, row:numRows});
+  }, [numCols, numRows])
+
+
   useEffect(() => {
     if (!isGameOn) {
       return;
@@ -131,7 +153,6 @@ function App() {
       clearInterval(interval);
     }
   }, [isGameOn, playSpeed])
-
 
 
   const onCellClick = ({ row, col }: CellId) => {
@@ -152,7 +173,16 @@ function App() {
     setIsGameOn(currentVal => !currentVal);
   }
 
- 
+  const onPlaySpeedChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    setPlaySpeed(Number(e.currentTarget.value));
+   }
+
+  const alterGridSize = () => {
+    if (window.confirm("Are you sure you want to resize grid? There might be performance issue on the larger grid.")) {
+      setIsFullScreen((current) => !current);
+    }
+  }
+  
 
   return (
     <div className="flex flex-col h-full ">
@@ -169,6 +199,14 @@ function App() {
           <button onClick={toggleGame} data-tip data-for="playTip"> {isGameOn?<Icon name={"pause"}/>:< Icon name={"play"} />} </button>
           <button onClick={getNextGeneration} data-tip data-for="nextGenTip"><Icon name="repeat" /></button>
           <button onClick={clearGrid} data-tip data-for="clearTip"><Icon name="clear" /></button>
+          <button onClick={alterGridSize} data-tip data-for="alterGridTip">{isFullScreen ? <Icon name="minimize" data-tip data-for="alterGridTip" /> : <Icon name="maximize" data-tip data-for="alterGridTip" />} </button>
+          <select name="playSpeed" onChange={onPlaySpeedChange}  value={playSpeed} >
+            <option value={1}>1x</option>
+            <option value={2}>2x</option>
+            <option value={3}>3x</option>
+            <option value={4}>4x</option>
+            <option value={5}>5x</option>
+          </select>
           <ReactTooltip id="clearTip" place="top" effect="solid">
            Wipes out all the living cells
           </ReactTooltip>
@@ -178,8 +216,8 @@ function App() {
           <ReactTooltip id="playTip" place="top" effect="solid">
            Start/Pause
           </ReactTooltip>
-          <ReactTooltip id="changeGridTip" place="top" effect="solid">
-           Alter Grid
+            <ReactTooltip id="alterGridTip" place="top" effect="solid">
+            Minimize/Maximize
           </ReactTooltip>
         </div>
       </div>
