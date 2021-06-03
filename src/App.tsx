@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import ReactTooltip from "react-tooltip";
 import {Icon } from "./Components/Icons";
 import { Logo, logoTypes} from "./Components/Logo";
@@ -11,6 +11,45 @@ type Action =
    | {type:"alter_grid", col:number, row:number}
    | {type:"clear_grid"}
 
+
+  const numOfAliveNeighbors = ({array, i, j}:{array:Array<Array<number>>,i:number, j:number}):number => {
+    let neighbor1 = array[i - 1][j - 1];
+    let neighbor2 = array[i - 1][j];
+    let neighbor3 = array[i - 1][j + 1];
+    let neighbor4 = array[i][j - 1];
+    let neighbor5 = array[i][j + 1];
+    let neighbor6 = array[i + 1][j - 1];
+    let neighbor7 = array[i + 1][j];
+    let neighbor8 =array[i + 1][j + 1];
+  
+    let aliveNeighbors: number = 0;
+  
+    if (neighbor1 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor2 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor3 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor4 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor5 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor6 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor7 !== 0) {
+      aliveNeighbors++;
+    }
+    if (neighbor8 !== 0) {
+      aliveNeighbors++;
+    }
+    return aliveNeighbors;
+  }
 
 
 const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<number>> => {
@@ -44,7 +83,7 @@ const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<n
               nextState[i][j]++;
             }
           }
-          
+
           //dying logic
           if (aliveNeighbors < 2 || aliveNeighbors > 3) {
             nextState[i][j] = 0;
@@ -52,6 +91,11 @@ const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<n
         })
       })
       return nextState;
+    
+    case "clear_grid":
+      const newClearedGrid = initializeGridArray({ numCols: state[0].length, numRows: state.length });
+      return newClearedGrid;
+    
     default:
       return state;
   }
@@ -66,51 +110,29 @@ const initializeGridArray = ({ numCols, numRows }: { numCols: number, numRows: n
 }
 
 
-const numOfAliveNeighbors = ({array, i, j}:{array:Array<Array<number>>,i:number, j:number}):number => {
-  let neighbor1 = array[i - 1][j - 1];
-  let neighbor2 = array[i - 1][j];
-  let neighbor3 = array[i - 1][j + 1];
-  let neighbor4 = array[i][j - 1];
-  let neighbor5 = array[i][j + 1];
-  let neighbor6 = array[i + 1][j - 1];
-  let neighbor7 = array[i + 1][j];
-  let neighbor8 =array[i + 1][j + 1];
-
-  let aliveNeighbors: number = 0;
-
-  if (neighbor1 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor2 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor3 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor4 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor5 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor6 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor7 !== 0) {
-    aliveNeighbors++;
-  }
-  if (neighbor8 !== 0) {
-    aliveNeighbors++;
-  }
-  return aliveNeighbors;
-}
-
-
-
 function App() {
-  const [numCols, setNumCols] = useState<number>(100);
-  const [numRows, setNumRows] = useState<number>(100);
+  const [numCols, setNumCols] = useState<number>(50);
+  const [numRows, setNumRows] = useState<number>(50);
+  const [frameSize, setFrameSize] = useState<number>(3);
   const [data, dispatch] = useReducer(gridReducer,initializeGridArray({numCols, numRows}));
+  const [isGameOn, setIsGameOn] = useState<boolean>(false);
+  const [playSpeed, setPlaySpeed] = useState<number>(1);
+  
+  useEffect(() => {
+    if (!isGameOn) {
+      return;
+    }
+  
+    const interval = setInterval(() => {
+      dispatch({ type: "next_generation" });
+    }, 1000/playSpeed);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, [isGameOn, playSpeed])
+
+
 
   const onCellClick = ({ row, col }: CellId) => {
     dispatch({ type: "toggle_cell", row, col });
@@ -120,23 +142,33 @@ function App() {
     dispatch({ type: "next_generation" });
   }
 
+  const clearGrid = () => {
+    if (window.confirm("Are you sure you want to proceed? All the progress will reset.")) {
+      dispatch({ type: "clear_grid" });
+    }
+  }
+
+  const toggleGame = () => {
+    setIsGameOn(currentVal => !currentVal);
+  }
+
+ 
+
   return (
     <div className="flex flex-col h-full ">
       <div className="absolute top-0 left-0 right-0 border bg-transparent">
         <Logo type={logoTypes.SM} />
        </div>
       <div className="flex-1 border flex ">
-        
-        
-        <div className=" h-screen w-screen border overflow-scroll py-10 ">
-          <Grid data={data} frameColSize={12} frameRowSize={13} onCellClick={onCellClick} />
+         <div className=" h-screen w-screen border overflow-scroll py-10 ">
+             <Grid data={data} frameColSize={frameSize} frameRowSize={frameSize} onCellClick={onCellClick} />
+           </div>
         </div>
-   </div>
       <div className="absolute bg-transparent bottom-0 border m-0 left-0 right-0 ">
         <div className="flex justify-around my-2">
-        <button  data-tip data-for="playTip"> < Icon name={ "play"} /> </button>
+          <button onClick={toggleGame} data-tip data-for="playTip"> {isGameOn?<Icon name={"pause"}/>:< Icon name={"play"} />} </button>
           <button onClick={getNextGeneration} data-tip data-for="nextGenTip"><Icon name="repeat" /></button>
-          <button data-tip data-for="clearTip"><Icon name="clear" /></button>
+          <button onClick={clearGrid} data-tip data-for="clearTip"><Icon name="clear" /></button>
           <ReactTooltip id="clearTip" place="top" effect="solid">
            Wipes out all the living cells
           </ReactTooltip>
@@ -149,9 +181,7 @@ function App() {
           <ReactTooltip id="changeGridTip" place="top" effect="solid">
            Alter Grid
           </ReactTooltip>
-
         </div>
-     
       </div>
     </div>
   );
