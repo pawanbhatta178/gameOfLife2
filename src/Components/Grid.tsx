@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 
 
 interface GridArgs{
@@ -7,14 +7,18 @@ interface GridArgs{
     frameRowSize: number;
 }
 
-interface GridProps extends GridArgs{
-    className?: string;
+
+export interface CellId{
+    row: number;
+    col: number;
 }
 
-interface arrayToRowsArgs{
-    array: Array<number>;
-    numOfRows: number;
+interface GridProps extends GridArgs{
+    className?: string;
+    onCellClick: (cellId: CellId) => void;
 }
+
+
 
 
 interface Dictionary<T>{
@@ -28,23 +32,10 @@ gridCellAliveStyle :`flex-none h-4 w-4 border-b border-l bg-purple-600 border-op
 
 
 
-const arrayToRows = ({ array, numOfRows }: arrayToRowsArgs) => {
-    const returnArrays: Array<Array<number>> = [];
-    const rowLength: number = Math.floor(array.length / numOfRows);
-    for (let i = 0; i < numOfRows;i++) {
-       returnArrays.push(array.splice(i,rowLength));
-    }
-    return returnArrays;
-}
-
-
-
-const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize }) => {
-    
-
+const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize, onCellClick }) => {
     return (
         <div className="flex flex-col items-center">
-            {data.map((rowData) => <div className=" flex  flex-nowrap">{rowData.map((cell) => <div className={(cell>0)?GridStyles['gridCellAliveStyle']:GridStyles['gridCellStyle']}></div>) }</div>)}
+            {data.map((rowData, i) => <div className=" flex  flex-nowrap">{rowData.map((cell, j) => <div onClick={(e) => { onCellClick({ row: i, col: j }) }} className={(cell>0)?GridStyles['gridCellAliveStyle']:GridStyles['gridCellStyle']}></div>) }</div>)}
         </div>
     )
 }
