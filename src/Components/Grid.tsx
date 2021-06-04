@@ -63,7 +63,6 @@ const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize, onCellCli
         return () => {
             gridRef.current?.removeEventListener("mousedown", onMouseDown);
             gridRef.current?.removeEventListener("mouseup", onMouseUp);
-
         }
     },[gridRef])
 

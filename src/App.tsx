@@ -7,7 +7,8 @@ import * as _ from "lodash";
 
 type Action =
    | { type: 'toggle_cell', col: number, row: number }
-   | { type: 'next_generation' }
+  | { type: 'next_generation' }
+  | {type:'next_generation_weighted'}
    | {type:"alter_grid", col:number, row:number}
    | {type:"clear_grid"}
 
@@ -91,7 +92,7 @@ const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<n
         })
       })
       return nextState;
-    
+  
     case "clear_grid":
       const newClearedGrid = initializeGridArray({ numCols: state[0].length, numRows: state.length });
       return newClearedGrid;
@@ -116,7 +117,7 @@ const initializeGridArray = ({ numCols, numRows }: { numCols: number, numRows: n
 function App() {
   const [numCols, setNumCols] = useState<number>(50);
   const [numRows, setNumRows] = useState<number>(50);
-  const [frameSize, setFrameSize] = useState<number>(3);
+  const [frameSize] = useState<number>(3);
   const [data, dispatch] = useReducer(gridReducer,initializeGridArray({numCols, numRows}));
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [playSpeed, setPlaySpeed] = useState<number>(3);
