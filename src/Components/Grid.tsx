@@ -25,7 +25,7 @@ export interface CellId{
 }
 
 interface GridProps extends GridArgs{
-    leaveFootPrint?: boolean;
+    footPrint?: boolean;
     className?: string;
     onCellClick: (cellId: CellId) => void;
 }
@@ -37,7 +37,7 @@ interface Dictionary<T>{
 
 const GridStyles: Dictionary<string> = {
 gridCellStyle:`flex-none h-4  w-4 border-b border-l border-purple-200`,
-gridCellAliveStyle: `flex-none h-4 w-4 border-b border-l bg-purple-600 border-purple-100`,
+gridCellAliveStyle: `flex-none h-4 w-4 border-b border-l bg-purple-700 border-purple-100`,
 }
 
 
@@ -47,30 +47,30 @@ const CellHeatStyle = (hit: number):string => {
         return "bg-white"
     }
     if (hit === 1) {
-        return "bg-gray-200"
+        return "bg-purple-50"
 
     }
     if (hit === 2) {
-        return "bg-gray-300"
+        return "bg-purple-100"
 
     }
     if (hit < 4) {
-        return "bg-gray-400"
+        return "bg-purple-200"
 
     }
     if (hit < 6) {
-        return "bg-gray-500"
+        return "bg-purple-300"
 
     }
-    if (hit < 8) {
-        return "bg-gray-600"
+    if (hit > 8) {
+        return "bg-purple-400"
 
     }
-    return "bg-gray-700";
+    return "bg-purple-400";
 }
 
 
-const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize, leaveFootPrint=false, onCellClick }) => {
+const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize, footPrint=false, onCellClick }) => {
     const gridRef = useRef<HTMLDivElement>(null);
     const [isDrawable, setIsDrawable] = useState<boolean>(false);
 
@@ -116,7 +116,7 @@ const Grid: React.FC<GridProps> = ({ data, frameColSize, frameRowSize, leaveFoot
                     if (j< frameColSize || j >= data[0].length - frameColSize) {
                         return null;
                     }   
-                    return <div key={`cell-${i}-${j}`} onMouseEnter={(e) => onMouseOver({ row: i, col: j })} onClick={(e) => { onCellClick({ row: i, col: j }) }} className={(cell?.alive) ? `${leaveFootPrint&&CellHeatStyle(cell.counter)} ${GridStyles['gridCellAliveStyle']}` : `${leaveFootPrint&&CellHeatStyle(cell.counter)} ${GridStyles['gridCellStyle']}`}></div>
+                    return <div key={`cell-${i}-${j}`} onMouseEnter={(e) => onMouseOver({ row: i, col: j })} onClick={(e) => { onCellClick({ row: i, col: j }) }} className={(cell?.alive) ? `${footPrint&&CellHeatStyle(cell.counter)} ${GridStyles['gridCellAliveStyle']}` : `${footPrint&&CellHeatStyle(cell.counter)} ${GridStyles['gridCellStyle']}`}></div>
                 } ) }</div>
             } )}
         </div>

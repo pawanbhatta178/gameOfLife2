@@ -127,6 +127,7 @@ function App() {
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [playSpeed, setPlaySpeed] = useState<number>(3);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
+  const [isFootPrintOn, setIsFootPrintOn] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -190,18 +191,21 @@ function App() {
     }
   }
   
+  const onFootPrintToggle = (e:React.FormEvent<HTMLInputElement>) => {
+    setIsFootPrintOn(current => !current);
+  }
 
   return (
     <div className="flex flex-col h-full ">
-      <div className="absolute top-0 left-0 right-0 border bg-transparent">
+      <div className="absolute top-0 left-0 right-0 bg-purple-100 shadow-sm">
         <Logo type={logoTypes.SM} />
        </div>
       <div className="flex-1 border flex ">
          <div className=" h-screen w-screen border overflow-scroll py-10 ">
-             <Grid data={data} frameColSize={frameSize} frameRowSize={frameSize} onCellClick={onCellClick} />
+          <Grid data={data} frameColSize={frameSize} frameRowSize={frameSize} onCellClick={onCellClick} footPrint={ isFootPrintOn}/>
            </div>
         </div>
-      <div className="absolute bg-transparent bottom-0 border m-0 left-0 right-0 ">
+      <div className="absolute bg-purple-100 shadow-sm bottom-0  m-0 left-0 right-0 ">
         <div className="flex justify-around my-2">
           <button onClick={toggleGame} data-tip data-for="playTip"> {isGameOn?<Icon name={"pause"}/>:< Icon name={"play"} />} </button>
           <button onClick={getNextGeneration} data-tip data-for="nextGenTip"><Icon name="repeat" /></button>
@@ -214,6 +218,11 @@ function App() {
             <option value={4}>4x</option>
             <option value={5}>5x</option>
           </select>
+
+            <label className="flex items-center space-x-1">
+            <input onChange={onFootPrintToggle} className="pl-2" type="checkbox" checked={isFootPrintOn} />
+             <span>Footprint</span>
+             </label>
           <ReactTooltip id="clearTip" place="top" effect="solid">
            Wipes out all the living cells
           </ReactTooltip>
