@@ -2,8 +2,14 @@ import React, { useReducer, useState, useEffect } from 'react';
 import ReactTooltip from "react-tooltip";
 import {Icon } from "./Components/Icons";
 import { Logo, logoTypes} from "./Components/Logo";
-import {Grid, CellId } from "./Components/Grid";
+import {Grid, CellId, Cell, GridData } from "./Components/Grid";
 import * as _ from "lodash";
+
+
+const createCell=({alive=false,counter=0}:{alive?:boolean, counter?:number}):Cell=> {
+  return { alive, counter };
+}
+
 
 type Action =
    | { type: 'toggle_cell', col: number, row: number }
@@ -13,7 +19,7 @@ type Action =
    | {type:"clear_grid"}
 
 
-  const numOfAliveNeighbors = ({array, i, j}:{array:Array<Array<number>>,i:number, j:number}):number => {
+  const numOfAliveNeighbors = ({array, i, j}:{array:GridData,i:number, j:number}):number => {
     let neighbor1 = array[i - 1][j - 1];
     let neighbor2 = array[i - 1][j];
     let neighbor3 = array[i - 1][j + 1];
@@ -25,46 +31,41 @@ type Action =
   
     let aliveNeighbors: number = 0;
   
-    if (neighbor1 !== 0) {
+    if (neighbor1?.alive ) {
       aliveNeighbors++;
     }
-    if (neighbor2 !== 0) {
+    if (neighbor2?.alive) {
       aliveNeighbors++;
     }
-    if (neighbor3 !== 0) {
+    if (neighbor3?.alive) {
       aliveNeighbors++;
     }
-    if (neighbor4 !== 0) {
+    if (neighbor4?.alive) {
       aliveNeighbors++;
     }
-    if (neighbor5 !== 0) {
+    if (neighbor5?.alive) {
       aliveNeighbors++;
     }
-    if (neighbor6 !== 0) {
+    if (neighbor6?.alive) {
       aliveNeighbors++;
     }
-    if (neighbor7 !== 0) {
+    if (neighbor7?.alive) {
       aliveNeighbors++;
     }
-    if (neighbor8 !== 0) {
+    if (neighbor8?.alive) {
       aliveNeighbors++;
     }
     return aliveNeighbors;
   }
 
 
-const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<number>> => {
+const gridReducer = (state: GridData, action: Action): GridData=> {
   switch (action.type) {
     case "toggle_cell":
       const newState = [...state];
-      if (newState[action.row][action.col] === 0) {
-        newState[action.row][action.col] = 1;
-      }
-      else {
-        newState[action.row][action.col] = 0;
-      }
+      newState[action.row][action.col].alive = !newState[action.row][action.col].alive;
       return newState;
-  
+     
     case "next_generation":
       const nextState = _.cloneDeep(state);
       state.forEach((rowItem, i) => {
@@ -75,19 +76,19 @@ const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<n
           if (j === 0||j===state[0].length-1) {
             return; 
           }
-
           const aliveNeighbors = numOfAliveNeighbors({ array: state, i, j });
 
           //born logic
-          if (cell === 0) {
+          if (!cell.alive) {
             if (aliveNeighbors === 3) { //birth
-              nextState[i][j]++;
+              nextState[i][j].alive = true;
+              nextState[i][j].counter++;
             }
           }
 
           //dying logic
           if (aliveNeighbors < 2 || aliveNeighbors > 3) {
-            nextState[i][j] = 0;
+            nextState[i][j].alive = false;
           }
         })
       })
@@ -105,10 +106,14 @@ const gridReducer = (state: Array<Array<number>>, action: Action): Array<Array<n
   }
 }
 
-const initializeGridArray = ({ numCols, numRows }: { numCols: number, numRows: number }): Array<Array<number>> => {
-  const returnVal: Array<Array<number>> = [];
+const initializeGridArray = ({ numCols, numRows }: { numCols: number, numRows: number }): GridData => {
+  const returnVal: GridData = [];
   for (let i = 0; i < numRows; i++){
-    returnVal.push(new Array(numCols).fill(0));
+    let array = [];
+    for (let j = 0; j < numCols; j++){
+      array.push(createCell({}))
+    }
+    returnVal.push(array);
   }
   return returnVal;
 }
@@ -157,6 +162,7 @@ function App() {
 
 
   const onCellClick = ({ row, col }: CellId) => {
+  
     dispatch({ type: "toggle_cell", row, col });
   }
   
