@@ -10,8 +10,6 @@ export interface Cell{
 export type GridData = Array<Array<Cell>>;
 
 
-
-
 interface GridArgs{
     data: GridData;
     frameColSize: number;

@@ -64,6 +64,9 @@ const gridReducer = (state: GridData, action: Action): GridData=> {
     case "toggle_cell":
       const newState = [...state];
       newState[action.row][action.col].alive = !newState[action.row][action.col].alive;
+      if (newState[action.row][action.col].alive) {
+        newState[action.row][action.col].counter++;
+      }
       return newState;
      
     case "next_generation":
