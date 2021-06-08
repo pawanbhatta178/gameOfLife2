@@ -13,8 +13,8 @@ const createCell=({alive=false,counter=0}:{alive?:boolean, counter?:number}):Cel
 
 type Action =
    | { type: 'toggle_cell', col: number, row: number }
-  | { type: 'next_generation' }
-  | {type:'next_generation_weighted'}
+   | { type: 'next_generation' }
+   | {type:'next_generation_weighted'}
    | {type:"alter_grid", col:number, row:number}
    | {type:"clear_grid"}
 
@@ -131,7 +131,8 @@ function App() {
   const [playSpeed, setPlaySpeed] = useState<number>(3);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [isFootPrintOn, setIsFootPrintOn] = useState<boolean>(false);
-
+  
+   
 
   useEffect(() => {
     if (isFullScreen) {
